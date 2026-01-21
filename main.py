@@ -4,6 +4,7 @@ import pandas as pd
 from fastapi.responses import JSONResponse
 from schema.patient import patient
 from model.loadmodel import predict_data,model_version,model
+from schema.responsemodel import responsemodel
 
 app=FastAPI()
 @app.get("/")
@@ -16,7 +17,7 @@ def health():
         "version":model_version,
         "model_loaded": model is not None
     }
-@app.post("/predict")
+@app.post("/predict",response_model=responsemodel,status_code=201)
 def predict_premium(data:patient):
     data_point={
         "income_lpa":data.income_lpa,
@@ -29,7 +30,7 @@ def predict_premium(data:patient):
     }
     try:
         response=predict_data(data_point)
-        return JSONResponse(status_code=201,content={"response":response })
+        return response
     except Exception as e:
         return JSONResponse(status_code=500,content=str(e))
     

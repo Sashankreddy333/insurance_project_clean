@@ -1,5 +1,5 @@
 
-from pydantic import BaseModel,Field,computed_field
+from pydantic import BaseModel,Field,computed_field,field_validator
 from typing import Literal, Annotated, Optional
 from config.cities import tier_1_cities,tier_2_cities
 
@@ -44,3 +44,9 @@ class patient(BaseModel):
             return 2
         else:
             return 3
+    @field_validator("city")
+    @classmethod
+    def convertcity(cls,value):
+        newval=value.strip().title()
+        return newval
+    
